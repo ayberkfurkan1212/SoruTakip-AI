@@ -26,6 +26,10 @@ YKS öğrencisi her gün yüzlerce soru çözüyor ama nerede iyi, nerede geride
 - **Veli için:** Ücretsiz veli paneli, haftalık özet, çalışma ısı haritası, öğrenciye motivasyon mesajı
 - **Hedef için:** 40.000+ YÖKATLAS kaydıyla sıralamaya göre "yeterli / sınırda" üniversite önerileri
 
+## Son güncellemeler
+
+- **Ekim 2026:** Tanıtım ana sayfası; veli panelinde deneme sonuçları ve hedefe kalan net; konu takibi, aralıklı tekrar ve AI pratik soruları; AI maliyet takibi ve bütçe tavanı; veritabanının AB'ye (Frankfurt) taşınması; gece yedeği ve sabah sağlık kontrolü; güvenlik sıkılaştırmaları (AI istek kilidi, fail-closed kontroller, ödeme durumu doğrulaması)
+
 ## Özellikler
 
 | Alan | Neler var |
@@ -33,12 +37,14 @@ YKS öğrencisi her gün yüzlerce soru çözüyor ama nerede iyi, nerede geride
 | 📝 **Takip** | TYT/AYT ders ve konu bazlı D/Y/B kaydı, deneme takibi, haftalık hedef, çalışma takvimi, Pomodoro |
 | 📊 **Analiz** | Haftalık ve 30 günlük net grafikleri, geçen haftayla karşılaştırma, paylaşılabilir PNG rapor kartı |
 | 🤖 **AI Koç** | Konu analizi, deneme yorumu, haftalık çalışma planı, günlük öneri (Claude API) |
-| 📕 **Hata Defteri** | Yanlış sorunun fotoğrafı, AI ile çözüm, ders/konu/zorluk tespiti ve güven skoru |
-| 🎯 **Üniversite** | YÖKATLAS 2025 + 2026 verisi, başarı sırasına göre eşleşen programlar |
-| 👨‍👩‍👦 **Veli Paneli** | E-posta daveti, haftalık rapor, ısı haritası, mesaj gönderme |
-| 🔥 **Motivasyon** | Duolingo tarzı seri (streak), kilometre taşları, push bildirimleri |
+| 📕 **Hata Defteri** | Yanlış sorunun fotoğrafı, AI ile çözüm, ders/konu/zorluk tespiti ve güven skoru; FSRS ile aralıklı tekrar ("Bugün tekrar et" listesi) |
+| 🧠 **Konu Takibi** | TYT/AYT konu listesi, kayıtlardan konu bazlı doğruluk oranı, en zayıf konular |
+| ✏️ **Pratik Soru** | Yanlış yapılan konudan YKS formatında (5 şık) AI soruları; her soru ayrı bir model çağrısıyla bağımsız doğrulanıyor |
+| 🎯 **Üniversite** | YÖKATLAS 2025 + 2026 verisi, başarı sırasına göre eşleşen programlar, hedef bölüme kalan net; herkese açık bölüm/program sayfaları ve puan hesaplayıcı |
+| 👨‍👩‍👦 **Veli Paneli** | E-posta daveti, haftalık rapor, ısı haritası, deneme sonuçları, sınava kalan gün ve hedefe kalan net, mesaj gönderme; 3-5 gün kayıt girilmezse veliye nazik hatırlatma e-postası |
+| 🔥 **Motivasyon** | Duolingo tarzı seri (streak), kilometre taşları, push bildirimleri, paylaşılabilir haftalık başarı kartı (story formatı), "arkadaşını getir" |
 | 💎 **Premium** | 7 gün deneme, aylık ve "YKS'ye kadar" paketler, "velinden iste" ödeme linki |
-| 📴 **Offline** | PWA, internet yokken kayıtlar kuyruğa alınıp bağlantı gelince gönderiliyor |
+| 📴 **Offline** | Telefona uygulama olarak yüklenebilen PWA; internet yokken kayıtlar kuyruğa alınıp bağlantı gelince gönderiliyor |
 
 ## Mimari
 
@@ -73,6 +79,7 @@ flowchart LR
   RW[Railway · Python<br/>YÖKATLAS güncelleyici] --> DB
   N8N[n8n · Railway<br/>otomasyonlar] --> DB
   API -. hatalar .-> SE[Sentry EU]
+  GA[GitHub Actions<br/>gece yedeği · sağlık kontrolü] --> DB
 ```
 
 ## Teknik öne çıkanlar
@@ -81,16 +88,19 @@ flowchart LR
 - Her tabloda Row Level Security: öğrenci yalnızca kendi verisine erişir, kimlik `auth.uid()` üzerinden çözülür
 - Sunucu tarafında kimlik: API'ler öğrenci kimliğini istek gövdesinden değil oturumdan alır (IDOR koruması)
 - Veli oturumu HMAC imzalı, `httpOnly` çerezle sunucuda doğrulanıyor
-- Upstash Redis ile IP bazlı rate limit ve öğrenci başına AI kotası
+- Upstash Redis ile IP bazlı rate limit ve öğrenci başına AI kotası; AI uç noktalarında öğrenci başına aynı anda tek istek (Redis kilidi), böylece eşzamanlı isteklerle kota aşılamıyor
+- Yetki ve bütçe kontrolleri hata anında kapalı kalıyor (fail-closed): altyapı yanıt vermezse erişim açılmıyor
+- E-posta gönderen uçlarda öğrenci başına günlük sınır ve sabit konu satırı (oltalama için kötüye kullanılamıyor)
 - Güvenlik başlıkları (CSP `frame-ancestors`, HSTS, `nosniff`), hata defteri fotoğrafları özel depoda ve kısa süreli imzalı URL'lerle sunuluyor
 
 **Yapay zekâ**
 - Sayısal hesaplar (net, başarı oranı, seri, sıralama eşleştirme) kodda yapılıyor. LLM sadece yorum ve plan üretiyor.
 - Göreve göre model seçimi: görsel soru çözümü için Sonnet, kısa günlük öneri için Haiku
 - Kotayla maliyet kontrolü: ücretsiz planda haftalık, premium'da günlük adil kullanım sınırı
+- Her AI çağrısı token ve maliyetiyle kaydediliyor; öğrenci başına aylık bütçe tavanı var, tavana yaklaşınca daha ucuz modele geçiliyor
 
 **Ödeme ve iş modeli**
-- Shopier entegrasyonu: imzalı form, imza doğrulamalı dönüş, her ödeme isteği yalnızca bir kez kredilendirilir
+- Shopier entegrasyonu: imza doğrulamalı bildirim, sipariş Shopier API'sinden yeniden okunuyor ve yalnızca açıkça "ödendi" durumundakiler işleniyor; her ödeme isteği yalnızca bir kez kredilendirilir
 - Fiyat ve süre her zaman sunucuda hesaplanıyor. "YKS'ye kadar" paketin süresi ödeme anında sınav tarihine göre belirleniyor.
 - Ücretsiz plan limitleri veritabanı trigger'larıyla uygulanıyor, istemciden aşılamıyor
 - Mesafeli satış sözleşmesi, ön bilgilendirme ve cayma onayı akışın içinde
@@ -99,6 +109,12 @@ flowchart LR
 - Railway üzerindeki Python servisi YÖKATLAS'tan 20.000+ programı çekip yıllık olarak güncelliyor
 - 308 TYT/AYT konusu, sınav tarihleri cron + AI web araması ile otomatik güncelleniyor
 
+**Altyapı ve operasyon**
+- Veritabanı (Supabase) ve sunucu fonksiyonları (Vercel) Frankfurt'ta, AB bölgesinde; Tokyo'dan Frankfurt'a taşıma GitHub Actions iş akışıyla yapıldı
+- Her gece şifreli (AES-256) `pg_dump` yedeği, bozuk/boş yedek kontrolüyle (GitHub Actions)
+- Her sabah otomatik sağlık kontrolü (yayın durumu ve sayfalar) ve salt okunur bir AI ajanının hazırladığı durum raporu: hatalar, veritabanı uyarıları, kullanım sayıları, yedek sonucu
+- Hatırlatma ve haftalık rapor e-postaları Vercel cron ile; aynı e-postanın iki kez gitmesi veritabanı kaydıyla engelleniyor
+
 **Uyumluluk (KVKK)**
 - 18 yaş altı kayıtta veli beyanı ve veliye otomatik bilgilendirme e-postası
 - Açık rıza modali, aydınlatma metni, veri işleme envanteri
@@ -106,7 +122,7 @@ flowchart LR
 
 ## Teknolojiler
 
-`Next.js 16` `React 19` `TypeScript` `Tailwind CSS v4` `Supabase (PostgreSQL, Auth, Storage)` `Claude API` `Upstash Redis` `Resend` `Web Push` `Recharts` `Sentry` `Vercel` `Railway` `n8n` `Python` `Shopier`
+`Next.js 16` `React 19` `TypeScript` `Tailwind CSS v4` `Supabase (PostgreSQL, Auth, Storage)` `Claude API` `Upstash Redis` `Resend` `Web Push` `Recharts` `Sentry` `Vercel` `Railway` `n8n` `Python` `Shopier` `GitHub Actions`
 
 ## Bu depodaki dosyalar
 
