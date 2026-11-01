@@ -28,7 +28,8 @@ YKS öğrencisi her gün yüzlerce soru çözüyor ama nerede iyi, nerede geride
 
 ## Son güncellemeler
 
-- **Ekim 2026:** Tanıtım ana sayfası; veli panelinde deneme sonuçları ve hedefe kalan net; konu takibi, aralıklı tekrar ve AI pratik soruları; AI maliyet takibi ve bütçe tavanı; veritabanının AB'ye (Frankfurt) taşınması; gece yedeği ve sabah sağlık kontrolü; güvenlik sıkılaştırmaları (AI istek kilidi, fail-closed kontroller, ödeme durumu doğrulaması)
+- **Ekim 2026:** Tanıtım ana sayfası; veli panelinde deneme sonuçları ve hedefe kalan net; konu takibi, aralıklı tekrar ve AI pratik soruları; AI maliyet takibi ve bütçe tavanı; veritabanının AB'ye (Frankfurt) taşınması; gece yedeği ve sabah sağlık kontrolü; güvenlik sıkılaştırmaları (AI istek kilidi, fail-closed kontroller, ödeme durumu doğrulaması); sinematik yeni arayüz (ana sayfa ve uygulama içi sayfalar, yapay zekâyla üretilmiş video bölümleri, tema uyumlu e-postalar ve paylaşım görseli); 3 aylık ve yıllık Premium paketleri; bağımlılık güvenlik güncellemeleri
+- **Yolda:** LGS (7–8. sınıf) modu geliştirme aşamasında
 
 ## Özellikler
 
@@ -43,7 +44,8 @@ YKS öğrencisi her gün yüzlerce soru çözüyor ama nerede iyi, nerede geride
 | 🎯 **Üniversite** | YÖKATLAS 2025 + 2026 verisi, başarı sırasına göre eşleşen programlar, hedef bölüme kalan net; herkese açık bölüm/program sayfaları ve puan hesaplayıcı |
 | 👨‍👩‍👦 **Veli Paneli** | E-posta daveti, haftalık rapor, ısı haritası, deneme sonuçları, sınava kalan gün ve hedefe kalan net, mesaj gönderme; 3-5 gün kayıt girilmezse veliye nazik hatırlatma e-postası |
 | 🔥 **Motivasyon** | Duolingo tarzı seri (streak), kilometre taşları, push bildirimleri, paylaşılabilir haftalık başarı kartı (story formatı), "arkadaşını getir" |
-| 💎 **Premium** | 7 gün deneme, aylık ve "YKS'ye kadar" paketler, "velinden iste" ödeme linki |
+| 💎 **Premium** | 7 gün deneme, aylık, 3 aylık, yıllık ve "YKS'ye kadar" paketler, "velinden iste" ödeme linki |
+| 🎬 **Tasarım** | Sinematik arayüz (koyu-sıcak tonlar, serif başlıklar); ana sayfada yapay zekâyla (Google Veo) üretilmiş döngü videoları: yalnızca geniş ekranda ve bölüm görünürken yüklenir, telefonda sabit kare gösterilir |
 | 📴 **Offline** | Telefona uygulama olarak yüklenebilen PWA; internet yokken kayıtlar kuyruğa alınıp bağlantı gelince gönderiliyor |
 
 ## Mimari
@@ -122,7 +124,7 @@ flowchart LR
 
 ## Teknolojiler
 
-`Next.js 16` `React 19` `TypeScript` `Tailwind CSS v4` `Supabase (PostgreSQL, Auth, Storage)` `Claude API` `Upstash Redis` `Resend` `Web Push` `Recharts` `Sentry` `Vercel` `Railway` `n8n` `Python` `Shopier` `GitHub Actions`
+`Next.js 16` `React 19` `TypeScript` `Tailwind CSS v4` `Supabase (PostgreSQL, Auth, Storage)` `Claude API` `Upstash Redis` `Resend` `Web Push` `Recharts` `Sentry` `Vercel` `Railway` `n8n` `Python` `Shopier` `GitHub Actions` `Google Veo`
 
 ## Bu depodaki dosyalar
 
