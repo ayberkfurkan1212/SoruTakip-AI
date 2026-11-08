@@ -29,21 +29,22 @@ YKS öğrencisi her gün yüzlerce soru çözüyor ama nerede iyi, nerede geride
 ## Son güncellemeler
 
 - **Ekim 2026:** Tanıtım ana sayfası; veli panelinde deneme sonuçları ve hedefe kalan net; konu takibi, aralıklı tekrar ve AI pratik soruları; AI maliyet takibi ve bütçe tavanı; veritabanının AB'ye (Frankfurt) taşınması; gece yedeği ve sabah sağlık kontrolü; güvenlik sıkılaştırmaları (AI istek kilidi, fail-closed kontroller, ödeme durumu doğrulaması); sinematik yeni arayüz (ana sayfa ve uygulama içi sayfalar, yapay zekâyla üretilmiş video bölümleri, tema uyumlu e-postalar ve paylaşım görseli); 3 aylık ve yıllık Premium paketleri; bağımlılık güvenlik güncellemeleri
+- **Kasım 2026:** Hata defteri v2 (hata nedeni etiketi, çözümden önce kademeli ipucu, zaman ağırlıklı konu ustalığı); seri dondurma ve günde tek sabah bildirimi; MEBİ ulusal deneme kısayolu; fotoğraftan çözümde önbellek ve haftalık raporlarda toplu (Batch) AI işleme; AI yanıtlarında kriz işaretine destek kartı; güvenlik sıkılaştırmaları (sıkı CSP, dış CDN'siz ikonlar, çıkışta cihaz verisi temizliği, push abonelik doğrulaması, site geneli günlük AI harcama tavanı, veritabanı rol yetkilerinin daraltılması); herkese açık sayfalarda tarayıcı trafiği için kaynak yönetimi
 - **Yolda:** LGS (7–8. sınıf) modu geliştirme aşamasında
 
 ## Özellikler
 
 | Alan | Neler var |
 |---|---|
-| 📝 **Takip** | TYT/AYT ders ve konu bazlı D/Y/B kaydı, deneme takibi, haftalık hedef, çalışma takvimi, Pomodoro |
+| 📝 **Takip** | TYT/AYT ders ve konu bazlı D/Y/B kaydı, deneme takibi (MEBİ ulusal denemeleri için hazır kısayol), haftalık hedef, çalışma takvimi, Pomodoro |
 | 📊 **Analiz** | Haftalık ve 30 günlük net grafikleri, geçen haftayla karşılaştırma, paylaşılabilir PNG rapor kartı |
-| 🤖 **AI Koç** | Konu analizi, deneme yorumu, haftalık çalışma planı, günlük öneri (Claude API) |
-| 📕 **Hata Defteri** | Yanlış sorunun fotoğrafı, AI ile çözüm, ders/konu/zorluk tespiti ve güven skoru; FSRS ile aralıklı tekrar ("Bugün tekrar et" listesi) |
-| 🧠 **Konu Takibi** | TYT/AYT konu listesi, kayıtlardan konu bazlı doğruluk oranı, en zayıf konular |
+| 🤖 **AI Koç** | Konu analizi, deneme yorumu, haftalık çalışma planı, günlük öneri, hata nedeni dağılımına göre yorum (Claude API) |
+| 📕 **Hata Defteri** | Yanlış sorunun fotoğrafı, AI ile çözüm, ders/konu/zorluk tespiti ve güven skoru; hata nedeni etiketi (Bilgi · İşlem · Dikkat · Süre · Okuma; AI önerir, öğrenci tek dokunuşla değiştirir) ve neden dağılımı; çözümden önce tek tek açılan 3 kademeli ipucu (kavram → strateji → ilk adım); FSRS ile aralıklı tekrar ("Bugün tekrar et" listesi), ipucu kullanımı tekrar aralığına yansıyor |
+| 🧠 **Konu Takibi** | TYT/AYT konu listesi, zaman ağırlıklı konu ustalığı (Beta-Binomial; az soru çözülen konu da değerlendiriliyor), Zayıf / Gelişiyor / Sağlam bantları, en zayıf konular |
 | ✏️ **Pratik Soru** | Yanlış yapılan konudan YKS formatında (5 şık) AI soruları; her soru ayrı bir model çağrısıyla bağımsız doğrulanıyor |
 | 🎯 **Üniversite** | YÖKATLAS 2025 + 2026 verisi, başarı sırasına göre eşleşen programlar, hedef bölüme kalan net; herkese açık bölüm/program sayfaları ve puan hesaplayıcı |
 | 👨‍👩‍👦 **Veli Paneli** | E-posta daveti, haftalık rapor, ısı haritası, deneme sonuçları, sınava kalan gün ve hedefe kalan net, mesaj gönderme; 3-5 gün kayıt girilmezse veliye nazik hatırlatma e-postası |
-| 🔥 **Motivasyon** | Duolingo tarzı seri (streak), kilometre taşları, push bildirimleri, paylaşılabilir haftalık başarı kartı (story formatı), "arkadaşını getir" |
+| 🔥 **Motivasyon** | Duolingo tarzı seri (streak) ve seri dondurma hakkı (her 7 günde 1, en fazla 2), kilometre taşları, günde tek sabah bildirimi (tekrar bekleyen hatalar ve günün odağı), push bildirimleri, paylaşılabilir haftalık başarı kartı (story formatı), "arkadaşını getir" |
 | 💎 **Premium** | 7 gün deneme, aylık, 3 aylık, yıllık ve "YKS'ye kadar" paketler, "velinden iste" ödeme linki |
 | 🎬 **Tasarım** | Sinematik arayüz (koyu-sıcak tonlar, serif başlıklar); ana sayfada yapay zekâyla (Google Veo) üretilmiş döngü videoları: yalnızca geniş ekranda ve bölüm görünürken yüklenir, telefonda sabit kare gösterilir |
 | 📴 **Offline** | Telefona uygulama olarak yüklenebilen PWA; internet yokken kayıtlar kuyruğa alınıp bağlantı gelince gönderiliyor |
@@ -93,13 +94,18 @@ flowchart LR
 - Upstash Redis ile IP bazlı rate limit ve öğrenci başına AI kotası; AI uç noktalarında öğrenci başına aynı anda tek istek (Redis kilidi), böylece eşzamanlı isteklerle kota aşılamıyor
 - Yetki ve bütçe kontrolleri hata anında kapalı kalıyor (fail-closed): altyapı yanıt vermezse erişim açılmıyor
 - E-posta gönderen uçlarda öğrenci başına günlük sınır ve sabit konu satırı (oltalama için kötüye kullanılamıyor)
-- Güvenlik başlıkları (CSP `frame-ancestors`, HSTS, `nosniff`), hata defteri fotoğrafları özel depoda ve kısa süreli imzalı URL'lerle sunuluyor
+- Çıkışta cihaz temizliği: push aboneliği sunucudan ve tarayıcıdan, çevrimdışı kuyruk ve sayfa önbelleği cihazdan siliniyor; push abonelikleri yalnızca bilinen bildirim servislerinden kabul ediliyor
+- Veritabanı rolleri en az yetki ilkesiyle: oturumsuz erişim yalnızca herkese açık katalog verisini okuyabiliyor, istemci rolünden gereksiz yazma yetkileri kaldırıldı
+- Güvenlik başlıkları (script, bağlantı, görsel ve font kaynaklarını kısıtlayan sıkı CSP, COOP, HSTS, `nosniff`; dış CDN yok, ikonlar kendi sunucusundan), hata defteri fotoğrafları özel depoda ve kısa süreli imzalı URL'lerle sunuluyor
 
 **Yapay zekâ**
 - Sayısal hesaplar (net, başarı oranı, seri, sıralama eşleştirme) kodda yapılıyor. LLM sadece yorum ve plan üretiyor.
 - Göreve göre model seçimi: görsel soru çözümü için Sonnet, kısa günlük öneri için Haiku
 - Kotayla maliyet kontrolü: ücretsiz planda haftalık, premium'da günlük adil kullanım sınırı
-- Her AI çağrısı token ve maliyetiyle kaydediliyor; öğrenci başına aylık bütçe tavanı var, tavana yaklaşınca daha ucuz modele geçiliyor
+- Her AI çağrısı token ve maliyetiyle kaydediliyor; öğrenci başına aylık bütçe tavanı ve site geneli günlük harcama tavanı var, tavana yaklaşınca daha ucuz modele geçiliyor
+- Fotoğraftan çözüm önbelleği: aynı görsel (SHA-256) tekrar gelirse model çağrılmıyor ve öğrencinin hakkı düşmüyor; kayıt başkalarına yalnızca birden fazla öğrencinin bağımsız çözümü aynı şıkta buluşunca veriliyor, fotoğraf saklanmıyor
+- Haftalık rapor yorumları Message Batches API ile toplu işleniyor (yarı maliyet); toplu iş bitmezse anlık çağrıya düşülüyor
+- İpucu merdiveninde cevabı ele veren ipuçları sunucuda eleniyor; AI yanıtında kriz işareti varsa destek kartı (112, ALO 183) gösteriliyor, içerik saklanmıyor
 
 **Ödeme ve iş modeli**
 - Shopier entegrasyonu: imza doğrulamalı bildirim, sipariş Shopier API'sinden yeniden okunuyor ve yalnızca açıkça "ödendi" durumundakiler işleniyor; her ödeme isteği yalnızca bir kez kredilendirilir
@@ -115,11 +121,12 @@ flowchart LR
 - Veritabanı (Supabase) ve sunucu fonksiyonları (Vercel) Frankfurt'ta, AB bölgesinde; Tokyo'dan Frankfurt'a taşıma GitHub Actions iş akışıyla yapıldı
 - Her gece şifreli (AES-256) `pg_dump` yedeği, bozuk/boş yedek kontrolüyle (GitHub Actions)
 - Her sabah otomatik sağlık kontrolü (yayın durumu ve sayfalar) ve salt okunur bir AI ajanının hazırladığı durum raporu: hatalar, veritabanı uyarıları, kullanım sayıları, yedek sonucu
-- Hatırlatma ve haftalık rapor e-postaları Vercel cron ile; aynı e-postanın iki kez gitmesi veritabanı kaydıyla engelleniyor
+- On binlerce herkese açık program sayfası için kaynak yönetimi: 30 günlük ISR, bağlantılarda ön yükleme kapalı, agresif tarayıcılar sayfa üretilmeden reddediliyor
+- Hatırlatma, haftalık rapor e-postaları ve sabah bildirimi Vercel cron ile; aynı e-postanın iki kez gitmesi veritabanı kaydıyla engelleniyor
 
 **Uyumluluk (KVKK)**
 - 18 yaş altı kayıtta veli beyanı ve veliye otomatik bilgilendirme e-postası
-- Açık rıza modali, aydınlatma metni, veri işleme envanteri
+- Açık rıza modali, aydınlatma metni, veri işleme envanteri; AI istemlerine yalnızca öğrencinin ilk adı gidiyor
 - Tek tıkla hesap silme: tüm kayıtlar ve fotoğraflar siliniyor
 
 ## Teknolojiler
